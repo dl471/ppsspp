@@ -38,6 +38,11 @@ class CtrlMemView
 	bool asciiSelected;
 	int selectedNibble;
 
+	bool rangeSelect;
+	int lastAddressClicked;
+	int selectedRangeBeginAddress;
+	int selectedRangeEndAddress;
+
 	int visibleRows;
 	
 	std::string searchQuery;

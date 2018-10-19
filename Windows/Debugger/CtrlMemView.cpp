@@ -227,9 +227,24 @@ void CtrlMemView::onPaint(WPARAM wParam, LPARAM lParam)
 			else strcpy(temp,"??");
 
 			unsigned char c = m[j];
-			if (c < 32 || c >= 128 || valid == false) c = '.';
+			if (c < 32 || c >= 128 || valid == false) c = '.';			
 
-			if (address+j == curAddress && searching == false)
+			unsigned int addressToCheck = address+j;
+			bool multipleAddressesSelected;
+			bool isInSelectedRange;
+				
+			if (rangeSelect) 
+			{
+				isInSelectedRange = (addressToCheck >= selectedRangeBeginAddress && addressToCheck <= selectedRangeEndAddress);
+				multipleAddressesSelected = selectedRangeBeginAddress - selectedRangeEndAddress;
+			}
+			else 
+			{
+				isInSelectedRange = (addressToCheck == curAddress);
+				multipleAddressesSelected = false;
+			}
+
+			if (isInSelectedRange && searching == false)
 			{
 				COLORREF oldBkColor = GetBkColor(hdc);
 				COLORREF oldTextColor = GetTextColor(hdc);
@@ -238,7 +253,7 @@ void CtrlMemView::onPaint(WPARAM wParam, LPARAM lParam)
 				{
 					SetTextColor(hdc,0xFFFFFF);
 					SetBkColor(hdc,0xFF9933);
-					if (selectedNibble == 0) SelectObject(hdc,(HGDIOBJ)underlineFont);
+					if (selectedNibble == 0 && !multipleAddressesSelected) SelectObject(hdc,(HGDIOBJ)underlineFont);
 				} else {
 					SetTextColor(hdc,0);
 					SetBkColor(hdc,0xC0C0C0);
@@ -247,10 +262,18 @@ void CtrlMemView::onPaint(WPARAM wParam, LPARAM lParam)
 							
 				if (hasFocus && !asciiSelected)
 				{
-					if (selectedNibble == 1) SelectObject(hdc,(HGDIOBJ)underlineFont);
+					if (selectedNibble == 1 && !multipleAddressesSelected) SelectObject(hdc,(HGDIOBJ)underlineFont);
 					else SelectObject(hdc,(HGDIOBJ)font);
 				}
 				TextOutA(hdc,hexStart+j*3*charWidth+charWidth,rowY,&temp[1],1);
+
+				if (rangeSelect && multipleAddressesSelected) // prevent highlighting of gap if multiple addresses have not been selected
+				{
+					if (addressToCheck != selectedRangeEndAddress) // ensure that the highlighting of gaps does not erroneously fill in the space after the last address
+					{
+						TextOutA(hdc,hexStart+j*3*charWidth+charWidth+charWidth,rowY," ",1); // highlight gap between addresses if a range has been selected
+					}
+				} 
 
 				if (hasFocus && asciiSelected)
 				{
@@ -415,6 +438,8 @@ void CtrlMemView::redraw()
 
 void CtrlMemView::onMouseDown(WPARAM wParam, LPARAM lParam, int button)
 {	
+	rangeSelect = (wParam & MK_SHIFT) && (wParam & MK_LBUTTON);
+
 	int x = LOWORD(lParam); 
 	int y = HIWORD(lParam);
 
@@ -514,6 +539,8 @@ void CtrlMemView::updateStatusBarText()
 
 void CtrlMemView::gotoPoint(int x, int y)
 {
+	lastAddressClicked = curAddress;
+
 	int line = y/rowHeight;
 	int lineAddress = windowStart+line*rowSize;
 
@@ -544,6 +571,20 @@ void CtrlMemView::gotoPoint(int x, int y)
 		updateStatusBarText();
 		redraw();
 	}
+
+	if (rangeSelect)
+	{
+		selectedRangeBeginAddress = lastAddressClicked;
+		if (curAddress < selectedRangeBeginAddress) 
+		{
+			selectedRangeEndAddress = selectedRangeBeginAddress; // reverse the addresses so that later (x > begin && x < end) calculations work
+			selectedRangeBeginAddress = curAddress;
+		}
+		else
+		{
+			selectedRangeEndAddress = curAddress;
+		}
+	}
 }
 
 void CtrlMemView::gotoAddr(unsigned int addr)
@@ -566,7 +607,6 @@ void CtrlMemView::gotoAddr(unsigned int addr)
 void CtrlMemView::scrollWindow(int lines)
 {
 	windowStart += lines*rowSize;
-	curAddress += lines*rowSize;
 	redraw();
 }
 
