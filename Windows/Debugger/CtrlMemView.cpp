@@ -430,6 +430,7 @@ void CtrlMemView::redraw()
 void CtrlMemView::onMouseDown(WPARAM wParam, LPARAM lParam, int button)
 {	
 	rangeSelect = (wParam & MK_SHIFT) && (wParam & MK_LBUTTON);
+	if (!rangeSelect) multipleAddressesSelected = false;
 
 	int x = LOWORD(lParam); 
 	int y = HIWORD(lParam);
@@ -530,7 +531,7 @@ void CtrlMemView::updateStatusBarText()
 
 void CtrlMemView::gotoPoint(int x, int y)
 {
-	lastAddressClicked = curAddress;
+	prevAddress = curAddress;
 
 	int line = y/rowHeight;
 	int lineAddress = windowStart+line*rowSize;
@@ -563,7 +564,7 @@ void CtrlMemView::gotoPoint(int x, int y)
 	{
 		if (!multipleAddressesSelected) 
 		{
-			selectedRangeBeginAddress = lastAddressClicked; // add to the users existing selection if they have one
+			selectedRangeBeginAddress = prevAddress; // add to the users existing selection if they have one, create start of a new selection if not
 		}
 		if (curAddress < selectedRangeBeginAddress) 
 		{

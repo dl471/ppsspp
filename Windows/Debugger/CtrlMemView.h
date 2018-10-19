@@ -40,7 +40,7 @@ class CtrlMemView
 
 	bool rangeSelect;
 	bool multipleAddressesSelected;
-	int lastAddressClicked;
+	int prevAddress;
 	int selectedRangeBeginAddress;
 	int selectedRangeEndAddress;
 
