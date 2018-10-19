@@ -39,6 +39,7 @@ class CtrlMemView
 	int selectedNibble;
 
 	bool rangeSelect;
+	bool multipleAddressesSelected;
 	int lastAddressClicked;
 	int selectedRangeBeginAddress;
 	int selectedRangeEndAddress;

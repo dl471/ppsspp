@@ -196,6 +196,8 @@ void CtrlMemView::onPaint(WPARAM wParam, LPARAM lParam)
 	SelectObject(hdc,standardBrush);
 	Rectangle(hdc,0,0,rect.right,rect.bottom);
 
+	multipleAddressesSelected = selectedRangeBeginAddress - selectedRangeEndAddress;
+
 	// draw one extra row that may be partially visible
 	for (int i = 0; i < visibleRows+1; i++)
 	{
@@ -230,19 +232,8 @@ void CtrlMemView::onPaint(WPARAM wParam, LPARAM lParam)
 			if (c < 32 || c >= 128 || valid == false) c = '.';			
 
 			unsigned int addressToCheck = address+j;
-			bool multipleAddressesSelected;
-			bool isInSelectedRange;
-				
-			if (rangeSelect) 
-			{
-				isInSelectedRange = (addressToCheck >= selectedRangeBeginAddress && addressToCheck <= selectedRangeEndAddress);
-				multipleAddressesSelected = selectedRangeBeginAddress - selectedRangeEndAddress;
-			}
-			else 
-			{
-				isInSelectedRange = (addressToCheck == curAddress);
-				multipleAddressesSelected = false;
-			}
+			
+			bool isInSelectedRange = (addressToCheck >= selectedRangeBeginAddress && addressToCheck <= selectedRangeEndAddress);
 
 			if (isInSelectedRange && searching == false)
 			{
@@ -574,14 +565,23 @@ void CtrlMemView::gotoPoint(int x, int y)
 
 	if (rangeSelect)
 	{
-		selectedRangeBeginAddress = lastAddressClicked;
+		if (!multipleAddressesSelected) 
+		{
+			selectedRangeBeginAddress = lastAddressClicked; // add to the users existing selection if they have one
+		}
 		if (curAddress < selectedRangeBeginAddress) 
 		{
 			selectedRangeEndAddress = selectedRangeBeginAddress; // reverse the addresses so that later (x > begin && x < end) calculations work
 			selectedRangeBeginAddress = curAddress;
+		} else
+		{			
+			selectedRangeEndAddress = curAddress;
 		}
-		else
+	} else 
+	{
+		if (!multipleAddressesSelected) 
 		{
+			selectedRangeBeginAddress = curAddress;
 			selectedRangeEndAddress = curAddress;
 		}
 	}
