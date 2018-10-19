@@ -269,7 +269,7 @@ void CtrlMemView::onPaint(WPARAM wParam, LPARAM lParam)
 
 				if (rangeSelect && multipleAddressesSelected) // prevent highlighting of gap if multiple addresses have not been selected
 				{
-					if (addressToCheck != selectedRangeEndAddress) // ensure that the highlighting of gaps does not erroneously fill in the space after the last address
+					if ((addressToCheck != selectedRangeEndAddress) && ((addressToCheck+1) % 16)) // ensure that the highlighting of gaps does not erroneously fill in the space after the last address of selected range or last byte of a row
 					{
 						TextOutA(hdc,hexStart+j*3*charWidth+charWidth+charWidth,rowY," ",1); // highlight gap between addresses if a range has been selected
 					}
