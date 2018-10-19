@@ -543,8 +543,6 @@ void CtrlMemView::gotoPoint(int x, int y)
 		asciiSelected = true;
 		curAddress = lineAddress+col;
 		selectedNibble = 0;
-		updateStatusBarText();
-		redraw();
 	} else if (x >= hexStart)
 	{
 		int col = (x-hexStart) / charWidth;
@@ -559,8 +557,6 @@ void CtrlMemView::gotoPoint(int x, int y)
 
 		asciiSelected = false;
 		curAddress = lineAddress+col/3;
-		updateStatusBarText();
-		redraw();
 	}
 
 	if (rangeSelect)
@@ -585,6 +581,9 @@ void CtrlMemView::gotoPoint(int x, int y)
 			selectedRangeEndAddress = curAddress;
 		}
 	}
+
+	updateStatusBarText();
+	redraw();
 }
 
 void CtrlMemView::gotoAddr(unsigned int addr)
