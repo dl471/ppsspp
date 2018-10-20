@@ -341,7 +341,8 @@ void CtrlMemView::onKeyDown(WPARAM wParam, LPARAM lParam)
 			search(false);
 			return;
 		case 'c':
-			search(true);
+			//search(true);
+			copySelectedRange(selectedRangeBeginAddress, selectedRangeEndAddress); // (temporarily) changing this to call the copy function
 			return;
 		}
 	}
