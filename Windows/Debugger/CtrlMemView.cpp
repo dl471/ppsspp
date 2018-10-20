@@ -576,12 +576,9 @@ void CtrlMemView::gotoPoint(int x, int y)
 			selectedRangeEndAddress = curAddress;
 		}
 	} else 
-	{
-		if (!multipleAddressesSelected) 
-		{
-			selectedRangeBeginAddress = curAddress;
-			selectedRangeEndAddress = curAddress;
-		}
+	{	
+		selectedRangeBeginAddress = curAddress;
+		selectedRangeEndAddress = curAddress;
 	}
 
 	updateStatusBarText();
@@ -779,7 +776,7 @@ void CtrlMemView::copySelectedRange(int startAddress, int endAddress)
 			values[i] = Memory::Read_U32(addressToRead);
 		} else 
 		{
-			values[i] = 0xFFFFFFFF; // retuing FF on invalid value to match previous Copy functions
+			values[i] = 0xFFFFFFFF; // returning FF on invalid value to match previous Copy functions
 		}
 	}
 
