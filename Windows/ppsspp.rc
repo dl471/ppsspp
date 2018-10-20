@@ -638,6 +638,8 @@ BEGIN
         MENUITEM "Copy Value (16 bit)",        ID_MEMVIEW_COPYVALUE_16
         MENUITEM "Copy Value (32 bit)",        ID_MEMVIEW_COPYVALUE_32
         MENUITEM "Dump...",                    ID_MEMVIEW_DUMP
+        MENUITEM SEPARATOR
+        MENUITEM "Add Breakpoint..."         ID_ADD_BREAKPOINT
     END
     POPUP "disasm"
     BEGIN

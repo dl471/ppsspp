@@ -81,6 +81,7 @@
 #define IDD_DUMPMEMORY                  253
 #define IDD_GEDBG_TAB_VERTICES          254
 #define IDD_GEDBG_TAB_MATRICES          255
+#define ID_ADD_BREAKPOINT               256
 
 #define IDC_STOPGO                      1001
 #define IDC_ADDRESS                     1002

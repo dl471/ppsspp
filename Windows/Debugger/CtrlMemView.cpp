@@ -490,6 +490,12 @@ void CtrlMemView::onMouseUp(WPARAM wParam, LPARAM lParam, int button)
 				W32Util::CopyTextToClipboard(wnd,temp);
 			}
 			break;
+
+		case ID_ADD_BREAKPOINT:
+			{
+				addBreakpoint();
+			}
+			break;
 		}
 		return;
 	}
