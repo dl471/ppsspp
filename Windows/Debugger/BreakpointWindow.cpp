@@ -283,3 +283,12 @@ void BreakpointWindow::initBreakpoint(u32 _address)
 	size = 1;
 	condition.clear();
 }
+
+void BreakpointWindow::initBreakpoint(u32 _address, bool _memory, bool _enabled, u32 _size)
+{
+	address = _address;
+	memory = _memory;
+	enabled = _enabled;
+	size = _size;
+	condition.clear();
+}

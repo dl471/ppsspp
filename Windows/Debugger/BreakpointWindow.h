@@ -47,4 +47,5 @@ public:
 	void loadFromMemcheck(MemCheck& memcheck);
 	void loadFromBreakpoint(BreakPoint& memcheck);
 	void initBreakpoint(u32 address);
+	void initBreakpoint(u32 address, bool memory, bool enabled, u32 size);
 };
