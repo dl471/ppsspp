@@ -46,7 +46,7 @@ CtrlMemView::CtrlMemView(HWND _wnd)
 	windowStart = curAddress;
 	asciiSelected = false;
 
-	selectedNibble = 0;
+	selectedNibble = HIGH_NIBBLE;
 	rowSize = 16;
 	addressStart = charWidth;
 	hexStart = addressStart + 9*charWidth;
@@ -238,7 +238,7 @@ void CtrlMemView::onPaint(WPARAM wParam, LPARAM lParam)
 				{
 					SetTextColor(hdc,0xFFFFFF);
 					SetBkColor(hdc,0xFF9933);
-					if (selectedNibble == 0) SelectObject(hdc,(HGDIOBJ)underlineFont);
+					if (selectedNibble == HIGH_NIBBLE) SelectObject(hdc,(HGDIOBJ)underlineFont);
 				} else {
 					SetTextColor(hdc,0);
 					SetBkColor(hdc,0xC0C0C0);
@@ -247,7 +247,7 @@ void CtrlMemView::onPaint(WPARAM wParam, LPARAM lParam)
 							
 				if (hasFocus && !asciiSelected)
 				{
-					if (selectedNibble == 1) SelectObject(hdc,(HGDIOBJ)underlineFont);
+					if (selectedNibble == LOW_NIBBLE) SelectObject(hdc,(HGDIOBJ)underlineFont);
 					else SelectObject(hdc,(HGDIOBJ)font);
 				}
 				TextOutA(hdc,hexStart+j*3*charWidth+charWidth,rowY,&temp[1],1);
@@ -524,7 +524,7 @@ void CtrlMemView::gotoPoint(int x, int y)
 		
 		asciiSelected = true;
 		curAddress = lineAddress+col;
-		selectedNibble = 0;
+		selectedNibble = HIGH_NIBBLE;
 		updateStatusBarText();
 		redraw();
 	} else if (x >= hexStart)
@@ -534,9 +534,9 @@ void CtrlMemView::gotoPoint(int x, int y)
 
 		switch (col % 3)
 		{
-		case 0: selectedNibble = 0; break;
-		case 1: selectedNibble = 1; break;
-		case 2: return;		// don't change position when clicking on the space
+		case HIGH_NIBBLE: selectedNibble = HIGH_NIBBLE; break;
+		case LOW_NIBBLE: selectedNibble = LOW_NIBBLE; break;
+		case SPACE: return;		// don't change position when clicking on the space
 		}
 
 		asciiSelected = false;
@@ -552,7 +552,7 @@ void CtrlMemView::gotoAddr(unsigned int addr)
 	u32 windowEnd = windowStart+lines*rowSize;
 
 	curAddress = addr;
-	selectedNibble = 0;
+	selectedNibble = HIGH_NIBBLE;
 
 	if (curAddress < windowStart || curAddress >= windowEnd)
 	{
@@ -574,20 +574,20 @@ void CtrlMemView::scrollCursor(int bytes)
 {
 	if (!asciiSelected && bytes == 1)
 	{
-		if (selectedNibble == 0)
+		if (selectedNibble == HIGH_NIBBLE)
 		{
-			selectedNibble = 1;
+			selectedNibble = LOW_NIBBLE;
 			bytes = 0;
 		} else {
-			selectedNibble = 0;
+			selectedNibble = HIGH_NIBBLE;
 		}
 	} else if (!asciiSelected && bytes == -1)
 	{
-		if (selectedNibble == 0)
+		if (selectedNibble == HIGH_NIBBLE)
 		{
-			selectedNibble = 1;
+			selectedNibble = LOW_NIBBLE;
 		} else {
-			selectedNibble = 0;
+			selectedNibble = HIGH_NIBBLE;
 			bytes = 0;
 		}
 	} 

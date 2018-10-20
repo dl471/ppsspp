@@ -19,6 +19,11 @@
 
 #include "../../Core/Debugger/DebugInterface.h"
 
+// For registering clicks on or underlining specific nibbles in the hex view
+#define HIGH_NIBBLE    0
+#define LOW_NIBBLE     1
+#define SPACE          2
+
 class CtrlMemView
 {
 	HWND wnd;
