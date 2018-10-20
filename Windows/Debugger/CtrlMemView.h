@@ -24,6 +24,13 @@
 #define LOW_NIBBLE     1
 #define SPACE          2
 
+// Spacing and Layout
+// These numbers will be multiplied by charWidth
+#define ADDRESS_PAD    1 // Distance beween left of frame and start of addresses
+#define HEX_PAD        9 // Distance between end of addresses and start of hex view
+#define ASCII_PAD      1 // Distance between end of hex view and start of ASCII view
+#define HEX_ELEM_SIZE  3 // A high nibble, a low nibble and a space
+
 class CtrlMemView
 {
 	HWND wnd;

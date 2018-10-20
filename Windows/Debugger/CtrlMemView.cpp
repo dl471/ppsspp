@@ -48,9 +48,9 @@ CtrlMemView::CtrlMemView(HWND _wnd)
 
 	selectedNibble = HIGH_NIBBLE;
 	rowSize = 16;
-	addressStart = charWidth;
-	hexStart = addressStart + 9*charWidth;
-	asciiStart = hexStart + (rowSize*3+1)*charWidth;
+	addressStart = ADDRESS_PAD*charWidth;
+	hexStart = addressStart + HEX_PAD*charWidth;
+	asciiStart = hexStart + (rowSize*HEX_ELEM_SIZE)*charWidth + ASCII_PAD*charWidth;
 
 	// set redraw timer
 	SetTimer(wnd,1,1000,0);
@@ -243,14 +243,14 @@ void CtrlMemView::onPaint(WPARAM wParam, LPARAM lParam)
 					SetTextColor(hdc,0);
 					SetBkColor(hdc,0xC0C0C0);
 				}
-				TextOutA(hdc,hexStart+j*3*charWidth,rowY,&temp[0],1);
+				TextOutA(hdc,hexStart+j*HEX_ELEM_SIZE*charWidth,rowY,&temp[0],1);
 							
 				if (hasFocus && !asciiSelected)
 				{
 					if (selectedNibble == LOW_NIBBLE) SelectObject(hdc,(HGDIOBJ)underlineFont);
 					else SelectObject(hdc,(HGDIOBJ)font);
 				}
-				TextOutA(hdc,hexStart+j*3*charWidth+charWidth,rowY,&temp[1],1);
+				TextOutA(hdc,hexStart+j*HEX_ELEM_SIZE*charWidth+charWidth,rowY,&temp[1],1);
 
 				if (hasFocus && asciiSelected)
 				{
@@ -266,7 +266,7 @@ void CtrlMemView::onPaint(WPARAM wParam, LPARAM lParam)
 				SetTextColor(hdc,oldTextColor);
 				SetBkColor(hdc,oldBkColor);
 			} else {
-				TextOutA(hdc,hexStart+j*3*charWidth,rowY,temp,2);
+				TextOutA(hdc,hexStart+j*HEX_ELEM_SIZE*charWidth,rowY,temp,2);
 				TextOutA(hdc,asciiStart+j*(charWidth+2),rowY,(char*)&c,1);
 			}
 		}
@@ -530,9 +530,9 @@ void CtrlMemView::gotoPoint(int x, int y)
 	} else if (x >= hexStart)
 	{
 		int col = (x-hexStart) / charWidth;
-		if ((col/3) >= rowSize) return;
+		if ((col/HEX_ELEM_SIZE) >= rowSize) return;
 
-		switch (col % 3)
+		switch (col % HEX_ELEM_SIZE)
 		{
 		case HIGH_NIBBLE: selectedNibble = HIGH_NIBBLE; break;
 		case LOW_NIBBLE: selectedNibble = LOW_NIBBLE; break;
@@ -540,7 +540,7 @@ void CtrlMemView::gotoPoint(int x, int y)
 		}
 
 		asciiSelected = false;
-		curAddress = lineAddress+col/3;
+		curAddress = lineAddress+col/HEX_ELEM_SIZE;
 		updateStatusBarText();
 		redraw();
 	}
