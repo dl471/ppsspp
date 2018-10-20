@@ -18,6 +18,7 @@
 //To get a class instance to be able to access it, just use getFrom(HWND wnd).
 
 #include "../../Core/Debugger/DebugInterface.h"
+#include "Windows/Debugger/BreakpointWindow.h"
 
 class CtrlMemView
 {
