@@ -80,4 +80,6 @@ public:
 	void gotoAddr(unsigned int addr);
 	void scrollWindow(int lines);
 	void scrollCursor(int bytes);
+
+	void addBreakpoint();
 };

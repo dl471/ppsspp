@@ -708,3 +708,34 @@ void CtrlMemView::search(bool continueSearch)
 	searching = false;
 	redraw();
 }
+
+void CtrlMemView::addBreakpoint()
+{
+	BreakpointWindow win(wnd, debugger);
+
+	bool exists = false;
+	if (CBreakPoints::IsAddressBreakPoint(curAddress))
+	{
+		auto breakpoints = CBreakPoints::GetBreakpoints();
+		for (size_t i = 0; i < breakpoints.size(); i++)
+		{
+			if (breakpoints[i].addr == curAddress)
+			{
+				win.loadFromBreakpoint(breakpoints[i]);
+				exists = true;
+				break;
+			}
+		}
+	}
+
+	if (!exists)
+		win.initBreakpoint(curAddress, true, true, 1);
+
+	if (win.exec())
+	{
+		if (exists)
+			CBreakPoints::RemoveBreakPoint(curAddress);
+		win.addBreakpoint();
+	}
+
+}
