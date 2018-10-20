@@ -748,3 +748,72 @@ void CtrlMemView::search(bool continueSearch)
 	searching = false;
 	redraw();
 }
+
+void CtrlMemView::copySelectedRange(int startAddress, int endAddress)
+{
+	auto memLock = Memory::Lock();
+
+	if (!PSP_IsInited())
+		return;
+
+	if (debugger == NULL || !debugger->isAlive())
+		return;
+
+	int adjustedEndAddress = endAddress + 4; // read one extra - will cut out unnecessary parts later
+	int lengthOfRange = adjustedEndAddress - startAddress;
+
+	const int HEX_ELEMENT_SIZE = 3; // space for two characters and a space for every byte to be read
+	int textBufferSize = (lengthOfRange * HEX_ELEMENT_SIZE) + 1;
+	int dwordsToRead = lengthOfRange / 4;
+	
+	char *textBuffer = new char[textBufferSize];
+	u32 *values = new u32[dwordsToRead];
+
+	for (int i = 0; i < dwordsToRead; i++) 
+	{
+		int addressToRead = startAddress + (i * 4);
+		bool valid = Memory::IsValidAddress(addressToRead);
+		if (valid) 
+		{
+			values[i] = Memory::Read_U32(addressToRead);
+		} else 
+		{
+			values[i] = 0xFFFFFFFF; // retuing FF on invalid value to match previous Copy functions
+		}
+	}
+
+	char temp[100];
+	int textBufferIndex = 0;
+
+	for (int i = 0; i < dwordsToRead; i++) // this could be integrated into the loop above, but i didn't initially because i thought it might end up looking too cluttered
+	{
+		sprintf(temp, "%08X", values[i]);
+		int tempIndex = 7;
+		for (int j = 0; j < 4; j++) // put spaces between the numbers and place them into the text buffer (in reverse to account for endianness)
+		{
+			textBuffer[textBufferIndex] = temp[tempIndex-1];
+			textBufferIndex++;
+			textBuffer[textBufferIndex] = temp[tempIndex];
+			textBufferIndex++;
+			textBuffer[textBufferIndex] = ' ';
+			textBufferIndex++;
+			tempIndex -= 2;
+		}
+	}
+
+	lengthOfRange -= 4; // compensate for difference between address and adjusted address that was created earlier
+	int adjust = (lengthOfRange + 1) % 4; 
+
+	if (adjust) 
+	{
+		adjust = 4 - adjust;
+		textBufferIndex -= adjust * HEX_ELEMENT_SIZE;
+	}
+
+	textBufferIndex -= 1; // remove trailing space
+	textBuffer[textBufferIndex] = '\0';
+	W32Util::CopyTextToClipboard(wnd, textBuffer);
+
+	delete(textBuffer);
+	delete(values);
+}

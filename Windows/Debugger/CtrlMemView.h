@@ -55,6 +55,8 @@ class CtrlMemView
 	DebugInterface *debugger;
 	void updateStatusBarText();
 	void search(bool continueSearch);
+
+	void copySelectedRange(int startAddreess, int endAddress);
 public:
 	CtrlMemView(HWND _wnd);
 	~CtrlMemView();
