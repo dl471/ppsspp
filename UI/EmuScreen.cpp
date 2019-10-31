@@ -206,9 +206,9 @@ void EmuScreen::bootGame(const std::string &filename) {
 		// Reset views in case controls are in a different place.
 		RecreateViews();
 
-		g_Discord.SetPresenceGame(info->GetTitle().c_str());
+		g_Discord.SetPresenceGame(info->GetTitle().c_str(), true);
 	} else {
-		g_Discord.SetPresenceGame(sc->T("Untitled PSP game"));
+		g_Discord.SetPresenceGame(sc->T("Untitled PSP game"), true);
 	}
 
 	CoreParameter coreParam{};

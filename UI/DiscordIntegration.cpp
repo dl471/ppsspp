@@ -41,6 +41,7 @@ static void handleDiscordError(int errCode, const char *message) {
 
 Discord::Discord() {
 	memset(lastGameLoaded, 0x00, DISCORD_PRESENCE_MAX);
+	lastTimeLoaded = time(0);
 }
 
 Discord::~Discord() {
@@ -68,7 +69,7 @@ void Discord::Init() {
 
 #ifdef ENABLE_DISCORD
 	if (strnlen(lastGameLoaded, DISCORD_PRESENCE_MAX)) {
-		SetPresenceGame(lastGameLoaded);
+		SetPresenceGame(lastGameLoaded, false);
 	}
 #endif
 }
@@ -101,7 +102,7 @@ void Discord::Update() {
 #endif
 }
 
-void Discord::SetPresenceGame(const char *gameTitle) {
+void Discord::SetPresenceGame(const char *gameTitle, bool resetTimer) {
 	if (!IsEnabled())
 		return;
 	
@@ -117,7 +118,12 @@ void Discord::SetPresenceGame(const char *gameTitle) {
 	discordPresence.state = lastGameLoaded;
 	std::string details = sc->T("Playing");
 	discordPresence.details = details.c_str();
-	discordPresence.startTimestamp = time(0);
+	if (resetTimer) {
+		discordPresence.startTimestamp = time(0);
+	}
+	else {
+		discordPresence.startTimestamp = lastTimeLoaded;
+	}
 	discordPresence.largeImageText = "PPSSPP is the best PlayStation Portable emulator around!";
 #ifdef GOLD
 	discordPresence.largeImageKey = "icon_gold_png";

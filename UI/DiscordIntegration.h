@@ -18,7 +18,7 @@ public:
 	void Update();  // Call every frame or at least regularly. Will initialize if necessary.
 	void Shutdown();
 
-	void SetPresenceGame(const char *gameTitle);
+	void SetPresenceGame(const char *gameTitle, bool resetTimer = true);
 	void SetPresenceMenu();
 	void ClearPresence();
 
@@ -28,6 +28,7 @@ private:
 
 	bool initialized_ = false;
 	char lastGameLoaded[DISCORD_PRESENCE_MAX];
+	time_t lastTimeLoaded;
 };
 
 extern Discord g_Discord;
