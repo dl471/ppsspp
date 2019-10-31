@@ -65,6 +65,12 @@ void Discord::Init() {
 #endif
 
 	initialized_ = true;
+
+#ifdef ENABLE_DISCORD
+	if (strnlen(lastGameLoaded, DISCORD_PRESENCE_MAX)) {
+		SetPresenceGame(lastGameLoaded);
+	}
+#endif
 }
 
 void Discord::Shutdown() {
