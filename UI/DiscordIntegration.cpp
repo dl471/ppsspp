@@ -114,7 +114,7 @@ void Discord::SetPresenceGame(const char *gameTitle) {
 
 	DiscordRichPresence discordPresence{};
 	snprintf(lastGameLoaded, DISCORD_PRESENCE_MAX, "%s", gameTitle);
-	discordPresence.state = gameTitle;
+	discordPresence.state = lastGameLoaded;
 	std::string details = sc->T("Playing");
 	discordPresence.details = details.c_str();
 	discordPresence.startTimestamp = time(0);
