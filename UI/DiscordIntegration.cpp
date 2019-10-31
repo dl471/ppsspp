@@ -39,6 +39,10 @@ static void handleDiscordError(int errCode, const char *message) {
 }
 #endif
 
+Discord::Discord() {
+	memset(lastGameLoaded, 0x00, DISCORD_PRESENCE_MAX);
+}
+
 Discord::~Discord() {
 	if (initialized_) {
 		ERROR_LOG(SYSTEM, "Discord destructor running though g_Discord.Shutdown() has not been called.");
@@ -103,6 +107,7 @@ void Discord::SetPresenceGame(const char *gameTitle) {
 	I18NCategory *sc = GetI18NCategory("Screen");
 
 	DiscordRichPresence discordPresence{};
+	snprintf(lastGameLoaded, DISCORD_PRESENCE_MAX, "%s", gameTitle);
 	discordPresence.state = gameTitle;
 	std::string details = sc->T("Playing");
 	discordPresence.details = details.c_str();

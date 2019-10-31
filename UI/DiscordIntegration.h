@@ -9,8 +9,11 @@
 
 // All you need to call is FrameCallback, Shutdown, and UpdatePresence.
 
+#define DISCORD_PRESENCE_MAX 129 // Discord has maximum of 128 bytes including \0 for presence buffers
+
 class Discord {
 public:
+	Discord();
 	~Discord();
 	void Update();  // Call every frame or at least regularly. Will initialize if necessary.
 	void Shutdown();
@@ -24,6 +27,7 @@ private:
 	bool IsEnabled() const;
 
 	bool initialized_ = false;
+	char lastGameLoaded[DISCORD_PRESENCE_MAX];
 };
 
 extern Discord g_Discord;
