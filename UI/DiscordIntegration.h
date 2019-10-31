@@ -22,11 +22,16 @@ public:
 	void SetPresenceMenu();
 	void ClearPresence();
 
+	void Connect();
+	void Reconnect();
+	bool IsFirstConnection();
+
 private:
 	void Init();
 	bool IsEnabled() const;
 
 	bool initialized_ = false;
+	volatile bool isFirstConnection = true;
 	char lastGameLoaded[DISCORD_PRESENCE_MAX];
 	time_t lastTimeLoaded;
 };

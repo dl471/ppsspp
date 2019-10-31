@@ -37,6 +37,15 @@ static const char *ppsspp_app_id = "423397985041383434";
 static void handleDiscordError(int errCode, const char *message) {
 	ERROR_LOG(SYSTEM, "Discord error code %d: '%s'", errCode, message);
 }
+
+static void handleDiscordReady(const DiscordUser *request) {
+	if (g_Discord.IsFirstConnection()) {
+		g_Discord.Connect();
+	}
+	else {
+		g_Discord.Reconnect();
+	}
+}
 #endif
 
 Discord::Discord() {
@@ -61,6 +70,7 @@ void Discord::Init() {
 #ifdef ENABLE_DISCORD
 	DiscordEventHandlers eventHandlers{};
 	eventHandlers.errored = &handleDiscordError;
+	eventHandlers.ready = &handleDiscordReady;
 	Discord_Initialize(ppsspp_app_id, &eventHandlers, 0, nullptr);
 	INFO_LOG(SYSTEM, "Discord connection initialized");
 #endif
@@ -166,4 +176,16 @@ void Discord::ClearPresence() {
 #ifdef ENABLE_DISCORD
 	Discord_ClearPresence();
 #endif
+}
+
+void Discord::Connect() {
+	isFirstConnection = false;
+}
+
+void Discord::Reconnect() {
+	SetPresenceGame(lastGameLoaded, false);
+}
+
+bool Discord::IsFirstConnection() {
+	return isFirstConnection;
 }
