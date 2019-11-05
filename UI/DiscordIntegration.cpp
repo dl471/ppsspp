@@ -123,6 +123,7 @@ void Discord::SetPresenceGame(const char *gameTitle, bool resetTimer) {
 #else
 	discordPresence.largeImageKey = "icon_regular_png";
 #endif
+	lastStoredPresence.UpdateStoredPresence(&discordPresence);
 	Discord_UpdatePresence(&discordPresence);
 #endif
 }
@@ -148,6 +149,7 @@ void Discord::SetPresenceMenu() {
 #else
 	discordPresence.largeImageKey = "icon_regular_png";
 #endif
+	lastStoredPresence.UpdateStoredPresence(&discordPresence);
 	Discord_UpdatePresence(&discordPresence);
 #endif
 }
@@ -161,12 +163,18 @@ void Discord::ClearPresence() {
 #endif
 }
 
+void Discord::LoadLastStoredPresence() {
+	DiscordRichPresence temp{};
+	lastStoredPresence.GetStoredPresence(&temp);
+	Discord_UpdatePresence(&temp);
+}
+
 void Discord::Connect() {
 	isFirstConnection = false;
 }
 
 void Discord::Reconnect() {
-	SetPresenceGame(lastGameLoaded, false);
+	LoadLastStoredPresence();
 }
 
 bool Discord::IsFirstConnection() {

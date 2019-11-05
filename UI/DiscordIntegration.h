@@ -54,6 +54,7 @@ public:
 	void SetPresenceGame(const char *gameTitle, bool resetTimer = true);
 	void SetPresenceMenu();
 	void ClearPresence();
+	void LoadLastStoredPresence();
 
 	void Connect();
 	void Reconnect();
