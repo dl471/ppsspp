@@ -8,23 +8,6 @@
 #include "DiscordIntegration.h"
 #include "i18n/i18n.h"
 
-#if (PPSSPP_PLATFORM(WINDOWS) || PPSSPP_PLATFORM(MAC) || PPSSPP_PLATFORM(LINUX)) && !PPSSPP_PLATFORM(ANDROID) && !PPSSPP_PLATFORM(UWP)
-
-#ifdef _MSC_VER
-#define ENABLE_DISCORD
-#elif USE_DISCORD
-#define ENABLE_DISCORD
-#endif
-
-#else
-
-// TODO
-
-#endif
-
-#ifdef ENABLE_DISCORD
-#include "ext/discord-rpc/include/discord_rpc.h"
-#endif
 
 // TODO: Enable on more platforms. Make optional.
 
@@ -188,4 +171,100 @@ void Discord::Reconnect() {
 
 bool Discord::IsFirstConnection() {
 	return isFirstConnection;
+}
+
+DiscordRichPresenceWrapper::DiscordRichPresenceWrapper() {
+	storedPresence.state = (char*)calloc(DiscordRichPresenceWrapper::TEXT_SIZE, sizeof(char));
+	storedPresence.details = (char*)calloc(DiscordRichPresenceWrapper::TEXT_SIZE, sizeof(char));
+	storedPresence.largeImageKey = (char*)calloc(DiscordRichPresenceWrapper::KEY_SIZE, sizeof(char));
+	storedPresence.largeImageText = (char*)calloc(DiscordRichPresenceWrapper::TEXT_SIZE, sizeof(char));
+	storedPresence.smallImageKey = (char*)calloc(DiscordRichPresenceWrapper::KEY_SIZE, sizeof(char));
+	storedPresence.smallImageText = (char*)calloc(DiscordRichPresenceWrapper::TEXT_SIZE, sizeof(char));
+	storedPresence.partyId = (char*)calloc(DiscordRichPresenceWrapper::TEXT_SIZE, sizeof(char));
+	storedPresence.matchSecret = (char*)calloc(DiscordRichPresenceWrapper::SECRET_SIZE, sizeof(char));
+	storedPresence.joinSecret = (char*)calloc(DiscordRichPresenceWrapper::SECRET_SIZE, sizeof(char));
+	storedPresence.spectateSecret = (char*)calloc(DiscordRichPresenceWrapper::SECRET_SIZE, sizeof(char));
+}
+
+DiscordRichPresenceWrapper::~DiscordRichPresenceWrapper() {
+	free((void *)storedPresence.state);
+	free((void *)storedPresence.details);
+	free((void *)storedPresence.largeImageKey);
+	free((void *)storedPresence.largeImageText);
+	free((void *)storedPresence.smallImageKey);
+	free((void *)storedPresence.smallImageText);
+	free((void *)storedPresence.partyId);
+	free((void *)storedPresence.matchSecret);
+	free((void *)storedPresence.joinSecret);
+	free((void *)storedPresence.spectateSecret);
+}
+
+void DiscordRichPresenceWrapper::GetStoredPresence(DiscordRichPresence *input) {
+	input->state = storedPresence.state;
+	input->details = storedPresence.details;
+	input->startTimestamp = storedPresence.startTimestamp;
+	input->endTimestamp = storedPresence.endTimestamp;
+	input->largeImageKey = storedPresence.largeImageKey;
+	input->largeImageText = storedPresence.largeImageText;
+	input->smallImageKey = storedPresence.smallImageKey;
+	input->smallImageText = storedPresence.smallImageText;
+	input->partyId = storedPresence.partyId;
+	input->partySize = storedPresence.partySize;
+	input->partyMax = storedPresence.partyMax;
+	input->matchSecret = storedPresence.matchSecret;
+	input->joinSecret = storedPresence.joinSecret;
+	input->spectateSecret = storedPresence.spectateSecret;
+	input->instance = storedPresence.instance;
+}
+
+void DiscordRichPresenceWrapper::UpdateStoredPresence(DiscordRichPresence *input) {
+
+	if (input->state != nullptr) {
+		snprintf((char *)storedPresence.state,  DiscordRichPresenceWrapper::TEXT_SIZE, "%s", input->state);
+	}
+
+	if (input->details != nullptr) {
+		snprintf((char *)storedPresence.details, DiscordRichPresenceWrapper::TEXT_SIZE, "%s", input->details);
+	}
+
+	storedPresence.startTimestamp = input->startTimestamp;
+	storedPresence.endTimestamp = input->endTimestamp;
+
+	if (input->largeImageKey != nullptr) {
+		snprintf((char *)storedPresence.largeImageKey, DiscordRichPresenceWrapper::KEY_SIZE, "%s", input->largeImageKey);
+	}
+
+	if (input->largeImageText != nullptr) {
+		snprintf((char *)storedPresence.largeImageText, DiscordRichPresenceWrapper::TEXT_SIZE, "%s", input->largeImageText);
+	}
+
+	if (input->smallImageKey != nullptr) {
+		snprintf((char *)storedPresence.smallImageKey, DiscordRichPresenceWrapper::KEY_SIZE, "%s", input->smallImageKey);
+	}
+
+	if (input->smallImageText != nullptr) {
+		snprintf((char *)storedPresence.smallImageText, DiscordRichPresenceWrapper::TEXT_SIZE, "%s", input->smallImageText);
+	}
+
+	if (input->partyId != nullptr) {
+		snprintf((char *)storedPresence.partyId, DiscordRichPresenceWrapper::TEXT_SIZE, "%s", input->partyId);
+	}
+
+	storedPresence.partySize = input->partySize;
+	storedPresence.partyMax = input->partyMax;
+
+	if (input->matchSecret != nullptr) {
+		snprintf((char *)storedPresence.matchSecret, DiscordRichPresenceWrapper::SECRET_SIZE, "%s", input->matchSecret);
+	}
+
+	if (input->joinSecret != nullptr) {
+		snprintf((char *)storedPresence.joinSecret, DiscordRichPresenceWrapper::SECRET_SIZE, "%s", input->joinSecret);
+	}
+
+	if (input->spectateSecret != nullptr) {
+		snprintf((char *)storedPresence.spectateSecret, DiscordRichPresenceWrapper::SECRET_SIZE, "%s", input->spectateSecret);
+	}
+
+	storedPresence.instance = input->instance;
+
 }
